@@ -5,27 +5,32 @@
 const menuBtn = document.getElementById("menuBtn");
 const navMenu = document.getElementById("navMenu");
 
-menuBtn.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
-});
+if (menuBtn && navMenu) {
 
-
-// Fermer le menu après avoir cliqué sur un lien
-
-document.querySelectorAll("#navMenu a").forEach(link => {
-
-    link.addEventListener("click", () => {
-        navMenu.classList.remove("active");
+    menuBtn.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
     });
 
-});
+    // Fermer le menu après avoir cliqué sur un lien
+    document.querySelectorAll("#navMenu a").forEach(link => {
+
+        link.addEventListener("click", () => {
+            navMenu.classList.remove("active");
+        });
+
+    });
+}
 
 
 // ===============================
 // ANNÉE AUTOMATIQUE
 // ===============================
 
-document.getElementById("year").textContent = new Date().getFullYear();
+const year = document.getElementById("year");
+
+if (year) {
+    year.textContent = new Date().getFullYear();
+}
 
 
 // ===============================
@@ -36,33 +41,46 @@ const cards = document.querySelectorAll(
     ".service-card, .quick-card, .price-card, .contact-card"
 );
 
-const observer = new IntersectionObserver(
-    entries => {
+if ("IntersectionObserver" in window) {
 
-        entries.forEach(entry => {
+    const observer = new IntersectionObserver(
+        entries => {
 
-            if (entry.isIntersecting) {
+            entries.forEach(entry => {
 
-                entry.target.style.opacity = "1";
-                entry.target.style.transform = "translateY(0)";
+                if (entry.isIntersecting) {
 
-            }
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
 
-        });
+                    observer.unobserve(entry.target);
+                }
 
-    },
-    {
-        threshold: 0.1
-    }
-);
+            });
+
+        },
+        {
+            threshold: 0.1
+        }
+    );
 
 
-cards.forEach(card => {
+    cards.forEach(card => {
 
-    card.style.opacity = "0";
-    card.style.transform = "translateY(25px)";
-    card.style.transition = "0.6s ease";
+        card.style.opacity = "0";
+        card.style.transform = "translateY(25px)";
+        card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
 
-    observer.observe(card);
+        observer.observe(card);
 
-});
+    });
+
+} else {
+
+    // Si le navigateur ne supporte pas IntersectionObserver
+    cards.forEach(card => {
+        card.style.opacity = "1";
+        card.style.transform = "translateY(0)";
+    });
+
+}
